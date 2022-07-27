@@ -7,7 +7,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.ivanm.myfinances.api.resource.dto.UsuarioDTO;
+import com.ivanm.myfinances.api.dto.UsuarioDTO;
 import com.ivanm.myfinances.exception.ErroAutenticacao;
 import com.ivanm.myfinances.exception.RegraNegocioException;
 import com.ivanm.myfinances.model.entity.Usuario;

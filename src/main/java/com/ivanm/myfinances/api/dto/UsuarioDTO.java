@@ -1,4 +1,4 @@
-package com.ivanm.myfinances.api.resource.dto;
+package com.ivanm.myfinances.api.dto;
 
 import lombok.Builder;
 import lombok.Data;
