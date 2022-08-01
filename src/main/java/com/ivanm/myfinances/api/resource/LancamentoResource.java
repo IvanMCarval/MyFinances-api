@@ -13,8 +13,10 @@ import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.ivanm.myfinances.api.dto.AtualizaStatusDTO;
 import com.ivanm.myfinances.api.dto.LancamentoDTO;
 import com.ivanm.myfinances.exception.RegraNegocioException;
 import com.ivanm.myfinances.model.entity.Lancamento;
@@ -45,7 +47,7 @@ public class LancamentoResource {
     lancamentoFiltro.setAno(ano);
 
     Optional<Usuario> usuario = usuarioService.obterPorId(idUsuario);
-    if (usuario.isPresent()) {
+    if (!usuario.isPresent()) {
       return ResponseEntity.badRequest().body("Não foi possivel realizar a consulta. Usuário não encontrado");
     } else {
       lancamentoFiltro.setUsuario(usuario.get());
@@ -80,6 +82,24 @@ public class LancamentoResource {
     }).orElseGet(() -> new ResponseEntity("Lançamento não encontrado na base dados.", HttpStatus.BAD_REQUEST));
   }
 
+  @PutMapping("{id}/atualiza-status")
+  public ResponseEntity atualizarStatus(@PathVariable("id") Long id, @RequestBody AtualizaStatusDTO dto) {
+    return service.obterPorId(id).map(entity -> {
+      StatusLancamento statusSelecionado = StatusLancamento.valueOf(dto.getStatus());
+      if (statusSelecionado == null) {
+        return ResponseEntity.badRequest().body("Não foi possivel atualizar o status di lançamento");
+      }
+
+      try {
+        entity.setStatus(statusSelecionado);
+        service.atualizar(entity);
+        return ResponseEntity.ok(entity);
+      } catch (RegraNegocioException e) {
+        return ResponseEntity.badRequest().body(e.getMessage());
+      }
+    }).orElseGet(() -> new ResponseEntity("Lançamento não encontrado na base de dados", HttpStatus.BAD_REQUEST));
+  }
+
   @DeleteMapping("{id}")
   public ResponseEntity deletar(@PathVariable("id") Long id) {
     return service.obterPorId(id).map(entidate -> {
@@ -101,8 +121,14 @@ public class LancamentoResource {
         .orElseThrow(() -> new RegraNegocioException("Usuário não encotrado para o id informado"));
 
     lancamento.setUsuario(usuario);
-    lancamento.setTipo(TipoLancamento.valueOf(dto.getTipo()));
-    lancamento.setStatus(StatusLancamento.valueOf(dto.getStatus()));
+
+    if (dto.getTipo() != null) {
+      lancamento.setTipo(TipoLancamento.valueOf(dto.getTipo()));
+    }
+
+    if (dto.getStatus() != null) {
+      lancamento.setStatus(StatusLancamento.valueOf(dto.getStatus()));
+    }
 
     return lancamento;
   }
