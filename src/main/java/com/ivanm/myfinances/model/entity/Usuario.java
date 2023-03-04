@@ -13,7 +13,7 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 @Entity //jpa reconhece como mapeamente de entidade
-@Table(name = "usuario", schema = "finances") //definição da tabela
+@Table(name = "usuario", schema = "financas") //definição da tabela
 @Builder
 @Data
 @NoArgsConstructor

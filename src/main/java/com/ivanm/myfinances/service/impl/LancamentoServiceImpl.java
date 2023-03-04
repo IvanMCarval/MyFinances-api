@@ -19,7 +19,7 @@ import com.ivanm.myfinances.model.repository.LancamentoRepository;
 import com.ivanm.myfinances.service.LancamentoService;
 
 @Service
-public class LancamentoServiceImpl implements LancamentoService{
+public class LancamentoServiceImpl implements LancamentoService {
 
   private LancamentoRepository repository;
 
@@ -53,7 +53,8 @@ public class LancamentoServiceImpl implements LancamentoService{
   @Override
   @Transactional(readOnly = true)
   public List<Lancamento> buscar(Lancamento lancamentoFiltro) {
-    Example example = Example.of(lancamentoFiltro, ExampleMatcher.matching().withIgnoreCase().withStringMatcher(StringMatcher.CONTAINING));
+    Example example = Example.of(lancamentoFiltro,
+        ExampleMatcher.matching().withIgnoreCase().withStringMatcher(StringMatcher.CONTAINING));
     return repository.findAll(example);
   }
 
@@ -98,8 +99,10 @@ public class LancamentoServiceImpl implements LancamentoService{
   @Override
   @Transactional(readOnly = true)
   public BigDecimal obterSaldoPorUsuario(Long id) {
-    BigDecimal receitas = repository.obterSaldoPorTipoLancamentoEUsuario(id, TipoLancamento.RECEITA);
-    BigDecimal despesas = repository.obterSaldoPorTipoLancamentoEUsuario(id, TipoLancamento.DESPESA);
+    BigDecimal receitas = repository.obterSaldoPorTipoLancamentoEUsuario(id, TipoLancamento.RECEITA,
+        StatusLancamento.EFETIVADO);
+    BigDecimal despesas = repository.obterSaldoPorTipoLancamentoEUsuario(id, TipoLancamento.DESPESA,
+        StatusLancamento.EFETIVADO);
 
     if (receitas == null) {
       receitas = BigDecimal.ZERO;
@@ -111,5 +114,5 @@ public class LancamentoServiceImpl implements LancamentoService{
 
     return receitas.subtract(despesas);
   }
-  
+
 }
